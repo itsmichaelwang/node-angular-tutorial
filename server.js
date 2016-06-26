@@ -18,6 +18,83 @@ app.use(bodyParser.json());                                     // parse applica
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 app.use(methodOverride());
 
+// define model =================
+var Todo = mongoose.model('Todo', {
+  text : String
+});
+
+// routes ======================================================================
+
+// api ---------------------------------------------------------------------
+// GET all todos
+app.get('/api/todos', function(req, res) {
+
+  // use mongoose to find all todos
+  Todo.find(function(err, todos) {
+
+    // if error, send error, otherwise return all todos in JSON format
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(todos);
+    }
+
+  })
+});
+
+// POST todo and send back all todos after creation
+app.post('/api/todos', function(req, res) {
+
+  // use mongoose to create a todo
+  Todo.create({
+    text: req.body.text,
+    done: false
+  }, function(err, todo) {
+
+    // if err, return that, otherwise get all todos
+    if (err) {
+      res.send(err);
+    } else {
+
+      // if err, return that, otherwise return all todos
+      Todo.find(function(err, todos) {
+        if (err) {
+          res.send(err);
+        } else {
+          res.json(todos);
+        }
+      });
+
+    }
+  });
+});
+
+// DELETE a todo
+app.delete('/api/todos', function(req, res) {
+
+  // use mongoose to delete a todo by id
+  Todo.remove({
+    _id: req.params.todo_id
+  }, function(err, todo) {
+
+    // if err, return that, otherwise get all todos
+    if (err) {
+      res.send(err);
+    } else {
+
+      // if err, return that, otherwise return all todos
+      Todo.find(function(err, todos) {
+        if (err) {
+          res.send(err);
+        } else {
+          res.json(todos);
+        }
+      });
+
+    }
+  });
+});
+
 // listen (start app with node server.js) ======================================
 app.listen(8080);
 console.log("App listening on port 8080");
