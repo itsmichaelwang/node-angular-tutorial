@@ -57,7 +57,7 @@ app.post('/api/todos', function(req, res) {
 });
 
 // DELETE a todo and send back all todos after deletion
-app.delete('/api/todos', function(req, res) {
+app.delete('/api/todos/:todo_id', function(req, res) {
   // use mongoose to delete a todo by id
   Todo.remove({
     _id: req.params.todo_id
